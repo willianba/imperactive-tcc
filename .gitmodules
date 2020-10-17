@@ -1,0 +1,9 @@
+[submodule "translator"]
+	path = translator
+	url = https://github.com/willianba/imperactive-translator
+[submodule "extractor"]
+	path = extractor
+	url = https://github.com/willianba/imperactive-extractor
+[submodule "loader"]
+	path = loader
+	url = https://github.com/willianba/imperactive-loader
