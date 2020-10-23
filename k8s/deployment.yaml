@@ -1,0 +1,110 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    service: imperative-extractor
+  name: imperative-extractor
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: imperative-extractor
+  template:
+    metadata:
+      labels:
+        service: imperative-extractor
+    spec:
+      containers:
+      - name: imperative-extractor
+        envFrom:
+        - secretRef:
+            name: github-secret
+        image: localhost:32000/imperative-extractor:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+      restartPolicy: Always
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    service: imperative-translator
+  name: imperative-translator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: imperative-translator
+  template:
+    metadata:
+      labels:
+        service: imperative-translator
+    spec:
+      containers:
+      - name: imperative-translator
+        envFrom:
+        - secretRef:
+            name: aws-secret
+        image: localhost:32000/imperative-translator:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8081
+      restartPolicy: Always
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    service: imperative-loader
+  name: imperative-loader
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: imperative-loader
+  template:
+    metadata:
+      labels:
+        service: imperative-loader
+    spec:
+      containers:
+      - name: imperative-loader
+        envFrom:
+        - secretRef:
+            name: github-secret
+        image: localhost:32000/imperative-loader:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8082
+      restartPolicy: Always
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    service: rabbitmq
+  name: rabbitmq
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: rabbitmq
+  template:
+    metadata:
+      labels:
+        service: rabbitmq
+    spec:
+      containers:
+      - env:
+        - name: RABBITMQ_DEFAULT_PASS
+          value: guest
+        - name: RABBITMQ_DEFAULT_USER
+          value: guest
+        image: rabbitmq:3.7-management
+        imagePullPolicy: IfNotPresent
+        name: rabbitmq
+        ports:
+        - containerPort: 5672
+        - containerPort: 15672
+      restartPolicy: Always
